@@ -1,20 +1,30 @@
+import React from "react";
 import Card from "./components/Card";
 import Header from "./components/Header";
 import Drawer from "./components/Drawer";
 
 function App() {
+  const [cartItems, setCartItems] = React.useState([]);
+  const [items, setItems] = React.useState([]);
+  const [cartOpened, setCartOpened] = React.useState(false);
 
-  const arr = [
-    { title: "Мужские Кроссовки Nike Blazer Mid Suede", price: 12999, imgUrl: "./img/sneakers/1.jpg" },
-    { title: "Мужские Кроссовки Nike Air Max 270", price: 8900, imgUrl: "./img/sneakers/2.jpg" },
-    { title: "Кроссовки Puma X Aka Boku Future Rider", price: 15999, imgUrl: "./img/sneakers/3.jpg" },
-    { title: "Мужские Кроссовки Under Armour Curry 8", price: 10000, imgUrl: "./img/sneakers/4.jpg" },
+  React.useEffect(() => {
+    fetch("https://63aa0f25594f75dc1dc7cdf5.mockapi.io/items").then((res) => {
+      return res.json();
+    })
+      .then((json) => {
+        setItems(json)
+      })
+  }, []);
 
-  ]
+ const onAddToCart = (obj) => {
+    setCartItems((prev) => [...prev, obj]);
+  }
+
   return (
     <div className="wrapper clear">
-      <Drawer />
-      <Header />
+      {cartOpened ? <Drawer items={cartItems} onClose={() => setCartOpened(false)} /> : null}
+      <Header onClickCart={() => setCartOpened(true)} />
       <div className="content p-40">
         <div className="mb-40 d-flex align-center justify-between">
           <h1 className="">Все кроссовки</h1>
@@ -24,59 +34,17 @@ function App() {
           </div>
         </div>
 
-        <div className="sneakers d-flex">
-          {arr.map((obj) => (
+        <div className="sneakers d-flex flex-wrap">
+          {items.map((item) => (
             <Card
-              title={obj.title}
-              price={obj.price}
-              img={obj.imgUrl} 
-              />
+              title={item.title}
+              price={item.price}
+              imgUrl={item.imgUrl}
+              onFavorite={() => console.log("Нажали в плюс")}
+              onPlus={(obj) => onAddToCart(obj)}
+              
+            />
           ))}
-
-
-          {/*
-
-          <div className="card">
-            <img src="/img/sneakers/2.jpg" width={133} height={112} alt="" />
-            <p>Мужские Кроссовки Nike Blazer Mid Suede</p>
-            <div className="d-flex justify-between align-center">
-              <div className="f-flex flex-column">
-                <p>Цена:</p>
-                <b>12 999 руб.</b>
-              </div>
-              <button className="button">
-                <img src="/img/plus.svg" width={11} height={11} alt="" />
-              </button>
-            </div>
-          </div>
-
-          <div className="card">
-            <img src="/img/sneakers/3.jpg" width={133} height={112} alt="" />
-            <p>Мужские Кроссовки Nike Blazer Mid Suede</p>
-            <div className="d-flex justify-between align-center">
-              <div className="f-flex flex-column">
-                <p>Цена:</p>
-                <b>12 999 руб.</b>
-              </div>
-              <button className="button">
-                <img src="/img/plus.svg" width={11} height={11} alt="" />
-              </button>
-            </div>
-          </div>
-
-          <div className="card">
-            <img src="/img/sneakers/4.jpg" width={133} height={112} alt="" />
-            <p>Мужские Кроссовки Nike Blazer Mid Suede</p>
-            <div className="d-flex justify-between align-center">
-              <div className="f-flex flex-column">
-                <p>Цена:</p>
-                <b>12 999 руб.</b>
-              </div>
-              <button className="button">
-                <img src="/img/plus.svg" width={11} height={11} alt="" />
-              </button>
-            </div>
-          </div> */}
         </div>
       </div>
 
